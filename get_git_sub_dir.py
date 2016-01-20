@@ -21,9 +21,9 @@ def read_url(url, private=False):
         return urllib2.urlopen(url).read()
 
 
-def write_file(item, dir_name):
+def write_file(item, dir_name, private=False):
     name = item['name']
-    res = read_url(item['url'], True)
+    res = read_url(item['url'], private)
     coded_string = json.loads(res)['content']
     contents = base64.b64decode(coded_string)
     print os.path.join(dir_name, name)
@@ -31,14 +31,14 @@ def write_file(item, dir_name):
         f.write(contents)
 
 
-def write_files(url, dir_name, recursive=True):
+def write_files(url, dir_name, recursive=True, private=False):
     print 'url', url
     os.makedirs(dir_name)
 
-    github_dir = json.loads(read_url(url, True))
+    github_dir = json.loads(read_url(url, private))
     for item in github_dir:
         if item['type'] == 'file':
-            write_file(item, dir_name)
+            write_file(item, dir_name, private)
         elif item['type'] == 'dir':
             write_files(item['url'], dir_name=os.path.join(
                 dir_name, item['name']))
@@ -46,6 +46,7 @@ def write_files(url, dir_name, recursive=True):
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
+    parser.add_option("--private", action="store_true", default=False)
     parser.add_option("-r", action="store")
     parser.add_option("-p", action="store")
     parser.add_option("-b", action="store")
@@ -69,6 +70,7 @@ if __name__ == '__main__':
     path = '/'.join(path)
 
     recursive = eval(options.r) if options.r else True
+    private = True if options.private else False
 
     write_files(GITHUB_REPOS_API_BASE_URL + path,
-                new_dir_name, recursive=recursive)
+                new_dir_name, recursive=recursive, private=private)

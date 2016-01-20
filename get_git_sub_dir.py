@@ -6,24 +6,36 @@ import os
 import optparse
 
 GITHUB_REPOS_API_BASE_URL = 'https://api.github.com/repos/'
+USERNAME = raw_input("username: ")
+PASSWORD = raw_input("password: ")
+
+
+def read_url(url, private=False):
+    if private:
+        request = urllib2.Request(url)
+        base64string = base64.encodestring(
+            '%s:%s' % (USERNAME, PASSWORD)).replace('\n', '')
+        request.add_header("Authorization", "Basic %s" % base64string)
+        return urllib2.urlopen(request).read()
+    else:
+        return urllib2.urlopen(url).read()
 
 
 def write_file(item, dir_name):
     name = item['name']
-    res = urllib2.urlopen(item['url']).read()
+    res = read_url(item['url'], True)
     coded_string = json.loads(res)['content']
     contents = base64.b64decode(coded_string)
     print os.path.join(dir_name, name)
-    f = open(os.path.join(dir_name, name), 'w')
-    f.write(contents)
-    f.close()
+    with open(os.path.join(dir_name, name), 'w') as f:
+        f.write(contents)
 
 
 def write_files(url, dir_name, recursive=True):
-
     print 'url', url
     os.makedirs(dir_name)
-    github_dir = json.loads(urllib2.urlopen(url).read())
+
+    github_dir = json.loads(read_url(url, True))
     for item in github_dir:
         if item['type'] == 'file':
             write_file(item, dir_name)

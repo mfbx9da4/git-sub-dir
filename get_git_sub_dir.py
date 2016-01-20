@@ -3,8 +3,10 @@ import json
 import urllib2
 import sys
 import os
+import optparse
 
 GITHUB_REPOS_API_BASE_URL = 'https://api.github.com/repos/'
+
 
 def write_file(item, dir_name):
     name = item['name']
@@ -16,6 +18,7 @@ def write_file(item, dir_name):
     f.write(contents)
     f.close()
 
+
 def write_files(url, dir_name, recursive=True):
 
     print 'url', url
@@ -25,27 +28,35 @@ def write_files(url, dir_name, recursive=True):
         if item['type'] == 'file':
             write_file(item, dir_name)
         elif item['type'] == 'dir':
-            write_files(item['url'], dir_name=os.path.join(dir_name, item['name']))
+            write_files(item['url'], dir_name=os.path.join(
+                dir_name, item['name']))
 
 
 if __name__ == '__main__':
-    args = dict(enumerate(sys.argv))
+    parser = optparse.OptionParser()
+    parser.add_option("-r", action="store")
+    parser.add_option("-p", action="store")
+    parser.add_option("-b", action="store")
+
+    options, args = parser.parse_args()
+
     path = 'mfbx9da4/blog/server'
-    path = args[1]
+    path = args[0]
     path = path.split('/')
-    
+
     new_dir_name = path[-1]
     if os.path.exists(new_dir_name):
         raise 'Directory', new_dir_name, 'already exists'
-    
+
     # use contents api
-    path.insert(2, 'contents')
+    path.append("contents")
+    if options.p:
+        path.append(options.p)  # filepath
+    if options.b:
+        path.append("?ref=" + options.b)  # git branch
     path = '/'.join(path)
-    
-    recursive = eval(args.get(2)) if args.get(2) else True
-    write_files(GITHUB_REPOS_API_BASE_URL + path, new_dir_name, recursive=recursive)
 
+    recursive = eval(options.r) if options.r else True
 
-
-
-        
+    write_files(GITHUB_REPOS_API_BASE_URL + path,
+                new_dir_name, recursive=recursive)

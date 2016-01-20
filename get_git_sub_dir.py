@@ -53,7 +53,6 @@ if __name__ == '__main__':
 
     options, args = parser.parse_args()
 
-    path = 'mfbx9da4/blog/server'
     path = args[0]
     path = path.split('/')
 

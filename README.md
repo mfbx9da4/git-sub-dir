@@ -23,3 +23,7 @@ If we don't want it to be recursive
 If we want a specific file
 
     python get_git_sub_dir.py twbs/bootstrap -p docs/examples/blog/index.html
+
+If we want to download from a specific branch (say `fix-15534`)
+
+    python get_git_sub_dir.py twbs/bootstrap -p docs/examples/blog/index.html -b fix-15534

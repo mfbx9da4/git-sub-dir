@@ -6,8 +6,8 @@ import os
 import optparse
 
 GITHUB_REPOS_API_BASE_URL = 'https://api.github.com/repos/'
-USERNAME = raw_input("username: ")
-PASSWORD = raw_input("password: ")
+USERNAME = ""
+PASSWORD = ""
 
 
 def read_url(url, private=False):
@@ -70,7 +70,12 @@ if __name__ == '__main__':
     path = '/'.join(path)
 
     recursive = eval(options.r) if options.r else True
+
     private = True if options.private else False
+
+    if private:
+        USERNAME = raw_input("username: ")
+        PASSWORD = raw_input("password: ")
 
     write_files(GITHUB_REPOS_API_BASE_URL + path,
                 new_dir_name, recursive=recursive, private=private)

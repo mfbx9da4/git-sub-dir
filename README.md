@@ -1,16 +1,16 @@
 Downloads git sub dir
 
-##Usage
+## Usage
     python get_git_sub_dir.py user/repo <options>
     python get_git_sub_dir.py user/private_repo --private <options>
 
-##Options Flags:
+## Options Flags:
 - `--private`: the repo is private (default is `False`, username and password will be requested)
 - `-r`: recursive download (default is `True`)
 - `-p`: filepath
 - `-b`: branch
 
-##Example
+## Example
 
 Let's download the docs from twitter bootstrap https://github.com/twbs/bootstrap/tree/master/docs
 
